@@ -1,2 +1,4 @@
 # Cpp---Assigment-5
-Iterable
+Iterable Project
+
+Authors: Anil Turgeman and Dor Zur
