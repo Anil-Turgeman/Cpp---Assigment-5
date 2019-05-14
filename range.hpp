@@ -1,52 +1,62 @@
 #pragma once
-#include <string>
-#include <iostream>
 
 using namespace std;
 
 namespace itertools{
-   template<typename T> class range { 
-        
-        private:
+	
+	template<typename T> class range{
+
+		public:
 
             T _begin;
-            T _end;
-        
-        public:
-            range(const T begin, const T end): _begin (begin), _end(end) {}
-            class iterator{
-                     
-                     T _iterator;
+            T _end; 
 
+            range(T first, T last) : _begin(first), _end(last){}
+
+            class iterator {
+                
+                private:
+                
+                    T it;
+                
                 public:
-                    iterator(T item): _iterator(item){}
 
-		            T& operator*() {    return _iterator; }
+                    iterator(T rangeStartElement):  it(rangeStartElement){}
 
-		            T* operator->() const { return &(_iterator);  }
+                    T operator*() const {
+                        return it;
+                    }
 
-		            iterator& operator++() {
-                        _iterator += 1;
-			            return *this;
-		            }
+                    T* operator->() const {
+                        return &it;
+                    }
+        
+                    iterator* operator++() {
+                        it++;
+                        return this;
+                    }
 
-		            const iterator operator++(int) {
-                        iterator it = *this; 
-                         ++*this; 
-                        return it; 
-		            }
-                    
-                    bool operator==(const iterator& rhs) const {
-			            return _iterator == rhs._iterator;
-		            }
+                    const iterator operator++(int) {
+                        iterator tmp = *this;
+                        it++;
+                        return tmp; 		
+                    }
 
-		            bool operator!=(const iterator& rhs) const {
-			            return _iterator != rhs._iterator;
+                    bool operator==(const iterator& other) const {
+                        return it == (other.it);
+                    }
+
+                    bool operator!=(const iterator& other) const {
+                        return it != (other.it);
                     }
             };
 
-            iterator begin() {  return iterator(_begin);    }
-
-	        iterator end() {    return iterator(_end);  }   
-    };
-}
+            iterator begin() const{
+                return iterator{_begin};
+            }
+            
+            iterator end() const{
+                return iterator{_end};
+            }
+	};
+};
