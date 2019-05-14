@@ -1,52 +1,49 @@
 #pragma once
 
+using namespace std;
+
 namespace itertools{
-    template<typename T> class powerset{
-         private:
-            T _item;
+	
+	template<typename T> class powerset{
+
+		private:
+
+            T start;
 
         public:
-            powerset(const T item): _item(item) {}
 
-            class iterator{
+            powerset(T firstValue) : start(firstValue){}
+
+            class iterator {
 
                 private:
-                    typename T::iterator _it;
+
+                    T value;
                 
                 public:
-                    iterator(typename T::iterator it): _it(it) {}
 
-		            auto operator*()  {
-                        std::string s = "{}";
-                        return s;
-		            }
+                    iterator(T rangeStartElement):  value(rangeStartElement){}
 
-		            iterator& operator++() {
-                        _it++;
-			            return *this;
-		            }
+                    auto operator*() const {
+                        return *value;
+                    }
+                    
+                    iterator* operator++() {
+                        value++;
+                        return *this;
+                    }
 
-		            const iterator operator++(int) {
-                        iterator it = *this; 
-                         ++*this; 
-                        return it; 
-		            }
-
-                    bool operator==(const iterator& rhs) const {
-			            return (_it == rhs._it);
-		            }
-
-		            bool operator!=(const iterator& rhs) const {
-			            return (_it != rhs._it);
+                    bool operator!=(const iterator& other) const {
+                        return value != (other.value);
                     }
             };
 
-            typename powerset::iterator begin() {
-		        return powerset::iterator(_item.begin());
-	        }
-
-	        typename powerset::iterator end() {
-		        return powerset::iterator(_item.end());
+            auto begin() const {
+                return (start.begin());
             }
-    };
-}
+
+            auto end() const {
+                return (start.end());
+            }
+	};
+};
