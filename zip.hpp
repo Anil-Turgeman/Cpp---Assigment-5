@@ -49,4 +49,8 @@ namespace itertools{
 			        }
             };
 	};
+	    template <typename K, typename E> std::ostream &operator<<(std::ostream &os, const std::pair<K,E> &p){
+            os << p.first << ',' << p.second;
+            return os;
+        }
 };
