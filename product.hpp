@@ -1,56 +1,99 @@
-#pragma once
+#include <sstream>
+namespace itertools
+{
 
-using namespace std;
+template <typename T1, typename T2>
 
-namespace itertools{
-	
-	template<typename T, typename S> class product{
+class product
+{
+private:
+  T1 first;
+  T2 second;
+  using V1 = decltype(*first.begin());
+  using V2 = decltype(*second.begin());
 
-		private:
+public:
+  product(const T1 first, const T2 second) : first(first), second(second)
+  {
+  }
+ int length() const{
+   return first.length()*second.length();
+ }
+  class iterator
+  {
+  private:
+    T1 first_begin;
+    typename T1::iterator first_data;
+    T2 second_begin;
+    typename T2::iterator second_data;
+    
 
-            T start;
-            S start2; 
-            
-            template<typename A, typename B> class iterator {
+    bool on_off = false;
 
-                private:
+  public:
+  
 
-                    A value;
-                    B value2;
 
-                public:
-                    B temp = value2;
 
-                    iterator(A firstStart, B secondStart):  value(firstStart), value2(secondStart){}
+    iterator(T1 first_be, T2 second_be) : first_begin(first_be), second_begin(second_be),
+                                          first_data(first_begin.begin()), second_data(second_begin.begin())
+    {
+    }
+    int length(){
+      return first_begin.length()*second_begin.length();
+    }
 
-                    std::pair<decltype(*value), decltype(*value2)> operator*() const {
-				        return std::pair<decltype(*value), decltype(*value2)> (*value, *value2);
-			        }
- 
-                    product::iterator<A,B> &operator++() {
-				        ++value2;;
-				        return *this;
-			        }
+    string operator*()
+    {
+      stringstream ss;
+      string res = "";
+      ss << *first_data;
+      ss << ",";
+      ss << *second_data;
+      ss >> res;
+      return res;
+    }
 
-                    bool operator!=(const iterator& other) const {
-                        if (value2 == other.value2){
-                            value2 = temp;
-                            value++;
-                        }
-                        return value != other.value && value2 != other.value2;
-                    }
-                };
+    //++i;
+    iterator operator++()
+    { 
+      
+      ++second_data;
+    if(second_data == second_begin.end()){
+        second_data=second_begin.begin();
+        first_data++;
+        return *this;
+    }
+      
+      return *this;
+    
+    }
 
-        public:
+        bool operator==(iterator other) 
+        {
+          
+          return **this == *other;
+        
+        }
 
-            product(T firstValue, S secondValue) : start(firstValue), start2(secondValue){}
+        bool operator!=( iterator other) 
+        {
 
-            auto begin() const{
-                return product::iterator<decltype(start.begin()), decltype(start2.begin())> (start.begin(), start2.begin());
-            }
-                
-            auto end() const{
-                return product::iterator<decltype(start.end()), decltype(start2.end())> (start.end(), iterastart2bel2.end());
-            }
-	};
+           return  !(*this==other);
+        }
+  };
+  iterator begin() const { return iterator{first, second}; }
+  iterator end() const
+  {
+    
+    int size = first.length()*second.length();
+     iterator it{first,second};
+    for (size_t i = 0; i < size; i++)
+    {
+      ++it;
+    }
+
+    return it;
+  }
 };
+}; // namespace itertools
