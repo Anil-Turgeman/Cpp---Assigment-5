@@ -1,56 +1,95 @@
-#pragma once
+#include <sstream>
+namespace itertools
+{
 
-using namespace std;
+template <typename T1, typename T2>
 
-namespace itertools{
-	
-	template<typename T,typename S> class zip{
+class zip
+{
+private:
+  T1 first;
+  T2 second;
+  using V1 = decltype(*first.begin());
+  using V2 = decltype(*second.begin());
 
-		public:
+public:
+  zip(const T1 first, const T2 second) : first(first), second(second)
+  {
+  }
+ int length() const{
+   return first.length();
+ }
+  class iterator
+  {
+  private:
+    T1 first_begin;
+    typename T1::iterator first_data;
+    T2 second_begin;
+    typename T2::iterator second_data;
+  int size =0;
+  int counter =0;
+    bool on_off = false;
 
-            zip(T firstValue, S secondValue) : start(firstValue), start2(secondValue){}
+  public:
+    iterator(T1 first_be, T2 second_be) : first_begin(first_be), second_begin(second_be),
+                                          first_data(first_begin.begin()), second_data(second_begin.begin())
+    {
+      length();
+    }
+    void length(){
+      for (;first_data != first_begin.end();++first_data){
+        size++;
+      }
+      first_data = first_begin.begin();
+    }
+    
+    string operator*()
+    {
+      if(counter == 0){
+        counter++;
+      }
+      stringstream ss;
+      string res = "";
+      ss << *first_data;
+      ss << ",";
+      ss << *second_data;
+      ss >> res;
+      return res;
+    }
 
-            auto begin() const{
-                return zip::iterator < decltype(start.begin()), decltype(start2.begin()) > (start.begin(), start2.begin());
-            }
-            
-            auto end() const{
-                return zip::iterator < decltype(start.end()), decltype(start2.end()) > (start.end(), start2.end());
-            }
+    //++i;
+    iterator operator++()
+    {
+      counter++;
+      ++first_data;
+      ++second_data;
+      return *this;
+    }
 
-        private:
-
-            T start;
-            S start2;    
-            
-            template<typename A,typename B> class iterator {
-
-                private:
-
-                    A value;
-                    B value2;
-
-                public:
-
-                    iterator(A firstStart, B secondStart):  value(firstStart),value2(secondStart){}
-
-                    std::pair<decltype(*value),decltype(*value2) > operator*() const {
-				        return std::pair < decltype(*value), decltype(*value2) > (*value, *value2);
-			        }   
-
-                    iterator* operator++() {
-                        ++value;
-                        ++value2;
-                        return this;
-                    }
-                    
-                    bool operator!=(zip::iterator<A,B> const &other){
-					    return (value != other.value) && (value2 != other.value2);
-			        }
-            };
-	};
-	    template <typename K, typename E> std::ostream &operator<<(std::ostream &os, const std::pair<K,E> &p){
-            os << p.first << ',' << p.second;
-            return os;
+        // i++;
+        // Usually iterators are passed by value and not by const& as they are small.
+        iterator operator++(int)
+        {
+           counter++;
+          iterator tmp = *this;
+          ++*this;
+          return tmp;
         }
+
+        bool operator==(iterator other) 
+        {
+          
+          return **this == *other;
+        
+        }
+
+        bool operator!=( iterator other) 
+        {
+           return  counter<=size;
+        }
+  };
+  iterator begin() const { return iterator{first, second}; }
+  iterator end() const
+  { return iterator{first, second};}
 };
+}; // namespace itertool
