@@ -6,10 +6,12 @@ namespace itertools{
 	
 	template<typename T> class range{
 
-		public:
+		private:
 
             T _begin;
             T _end; 
+
+        public:    
 
             range(T first, T last) : _begin(first), _end(last){}
 
@@ -21,25 +23,21 @@ namespace itertools{
                 
                 public:
 
-                    iterator(T rangeStartElement):  it(rangeStartElement){}
+                    iterator(T start):  it(start){}
 
-                    T operator*() const {
-                        return it;
-                    }
-
-                    T* operator->() const {
-                        return &it;
-                    }
-        
                     iterator* operator++() {
-                        it++;
+                        ++it;
                         return this;
                     }
 
                     const iterator operator++(int) {
-                        iterator tmp = *this;
+                        iterator t = *this;
                         it++;
-                        return tmp; 		
+                        return t; 		
+                    }
+
+                    T operator*() const {
+                        return it;
                     }
 
                     bool operator==(const iterator& other) const {
