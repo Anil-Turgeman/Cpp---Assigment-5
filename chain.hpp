@@ -6,12 +6,10 @@ namespace itertools{
 	
 	template<typename T,typename S> class chain{
 
-		public:
+		private:
 
-            T item1;
+            T item;
             S item2; 
-
-            chain(T firstValue, S secondValue) : item1(firstValue), item2(secondValue){}
             
             template<typename A,typename B> class iterator {
                 
@@ -22,28 +20,47 @@ namespace itertools{
 
                 public:
 
+                    bool isFirstEnd = false;
                     iterator(A firstStart, B secondStart):  value(firstStart), value2(secondStart){}
 
                     T operator*() const {
-                        return value;
+                        if(isFirstEnd) return *value2;
+				        return *value;
                     }
 
-                    iterator* operator++() {
-                        value++;
-                        return this;
-                    }
+                    chain::iterator<A,B> &operator++() {
+				        if(!isFirstEnd) value++;
+				        else value2++;
+				        return *this;
+			        }
+                    
+                    iterator operator++(int) {
+                        iterator tmp = *this;
+                        if(!isFirstEnd) value++;
+                        else value2++;
+                        return tmp;
+			        }
 
-                    bool operator!=(const iterator& other) const {
-                        return value != (other.value);
-                    }
+                    bool operator ==(chain::iterator<A,B> const &other){
+				        return (*value==*other.value) && (*value2==*other.value2);
+			        }
+			
+			        bool operator!=(chain::iterator<A,B> const &other){
+                        if(!isFirstEnd && value == other.value) isFirstEnd = true;
+                        if(isFirstEnd) return value2 != other.value2;
+                        return value != other.value;
+			        }
             };
 
+        public:
+            chain(T firstValue, S secondValue): item(firstValue), item2(secondValue){}
+
             auto begin() const{
-                return (item1.begin(), item2.begin());
+                return chain::iterator<decltype(item.begin()), decltype(item2.begin())> (item.begin(), item2.begin());
             }
             
             auto end() const{
-                return (item1.end(), item2.end());
+                return chain::iterator<decltype(item.end()), decltype(item2.end())> (item.end(), item2.end());
             }
 	};
 };
